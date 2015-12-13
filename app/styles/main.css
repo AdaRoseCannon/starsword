@@ -1,0 +1,90 @@
+body {
+	background: #051234;
+}
+
+.handle {
+	background: linear-gradient(to right,#0d0d0d 0%, #434343 20%, #676767 50%,#727272 70%,#989898 74%, #454545 87%,#232323 100%);
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 50vw;
+	width: 12em;
+	transform: translateX(-50%);
+} 
+
+.grip {
+	margin-top: 2em;
+	position: relative;
+	top: 0;
+	left: 0;
+}
+
+.grip div {
+	padding: 0.5em;
+	margin-bottom: 1em;
+	position: relative;
+	box-shadow: 0 0 1em black inset;
+}
+
+
+.grip div:before, .grip div:after {
+	width: 1em;
+	content: '';
+	background: #051234;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+}
+
+.grip div:before {
+	left: 0;
+}
+
+.grip div:after {
+	right: 0;
+}
+
+.onButton {
+	outline: none;
+	border: none;
+	border-radius: 50%;
+	width: 5em;
+	height: 5em;
+	position: relative;
+	left: calc(50% - 2.5em);
+	box-shadow: 0 0 1em black;
+	background: maroon;
+	background: repeating-radial-gradient( circle at 50% 50%, #E21B1B, #634747 10px );
+	transition: transform ease 0.2s;
+	transform: scale(1);
+}
+
+.onButton:active {
+	border: none;
+	outline: none;
+	background: repeating-radial-gradient( circle at 50% 50%, #FF9E41, #634747 10px );
+	transform: scale(0.9);
+}
+
+.message {
+	padding: 1em;
+	font-family: sans-serif;
+	text-align: center;
+	font-weight: 800;
+	font-size: 150%;
+	color: rgba(0,0,0,0.6);
+	text-shadow: 2px 2px 3px rgba(255,255,255,0.1);
+	position: absolute;
+	bottom: 0;
+}
+
+
+@media screen and (orientation:landscape) {
+	.handle {
+		left: 100vw;
+		top: 50%;
+		transform-origin: top left;
+		height: 100vw;
+		transform: rotate(90deg) translateX(-50%);
+	}
+}
