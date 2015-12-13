@@ -54,7 +54,7 @@ function unlockIOSSound() {
 	source.connect(context.destination);
 
 	// play the file
-	source.noteOn(0);
+	source.start(0);
 }
 
 function createSource(buffer) {
