@@ -1,7 +1,6 @@
 'use strict';
-/* global AudioContext */
 
-const context = new AudioContext();
+const context = window.AudioContext ? new window.AudioContext() : new window.webkitAudioContext();
 const loader = require('webaudio-buffer-loader');
 const buffers = ['./audio/hum.wav', './audio/on.wav', './audio/off.wav', './audio/smash.wav'];
 
