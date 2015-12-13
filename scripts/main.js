@@ -159,9 +159,11 @@ loadedAudio.then(function (_ref) {
 			var nt = performance ? performance.now() : Date.now();
 			if (t) {
 				var dt = (nt - t) / 1000;
-				vx *= 0.8; // Hack to allow velocity to settle
-				vy *= 0.8;
-				vz *= 0.8;
+				var velocityHalflife = 0.05;
+				var decay = Math.pow(2, -1 * dt / velocityHalflife);
+				vx *= decay; // Hack to allow velocity to settle
+				vy *= decay;
+				vz *= decay;
 				vx += event.acceleration.x * dt;
 				vy += event.acceleration.y * dt;
 				vz += event.acceleration.z * dt;
