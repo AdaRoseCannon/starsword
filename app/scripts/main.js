@@ -1,4 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/*global performance*/
 'use strict';
 
 var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
@@ -91,7 +92,6 @@ loadedAudio.then(function (_ref) {
 		    on = undefined,
 		    off = undefined,
 		    activated = false;
-		var doppler = 0;
 
 		Object.defineProperty(this, 'activated', {
 			get: function get() {
@@ -104,10 +104,6 @@ loadedAudio.then(function (_ref) {
 				return color;
 			}
 		});
-
-		var maxD = 0;
-		var minD = 0;
-		var prevD = 0;
 
 		this.on = function () {
 
@@ -154,14 +150,34 @@ loadedAudio.then(function (_ref) {
 			createSource(smashBuffer).source.start();
 		};
 
+		var vx = 0,
+		    vy = 0,
+		    vz = 0,
+		    t = 0;
 		window.addEventListener('devicemotion', function (event) {
-			prevD = doppler;
-			doppler = Math.sqrt(Math.pow(event.acceleration.x, 2) + Math.pow(event.acceleration.y, 2) + Math.pow(event.acceleration.z, 2));
-			if (doppler > maxD) maxD = doppler;
-			if (doppler < minD) minD = doppler;
+
+			var nt = performance ? performance.now() : Date.now();
+			if (t) {
+				var dt = (nt - t) / 1000;
+				vx *= 0.8; // Hack to allow velocity to settle
+				vy *= 0.8;
+				vz *= 0.8;
+				vx += event.acceleration.x * dt;
+				vy += event.acceleration.y * dt;
+				vz += event.acceleration.z * dt;
+			}
+			t = nt;
+
+			// For detecting sudden stops
+			var acceleration = Math.sqrt(Math.pow(event.acceleration.x, 2) + Math.pow(event.acceleration.y, 2) + Math.pow(event.acceleration.z, 2));
+			var distort = Math.sqrt(vx * vx + vy * vy + vz * vz);
+			distort = Math.pow(1.2, distort);
+			console.log(distort);
+
 			if (hum) {
-				hum.source.playbackRate.value = Math.max(Math.min(Math.pow(1.3, doppler - prevD), 2), 0.8);
-				if (doppler > 40) {
+				hum.source.playbackRate.value = distort;
+				hum.gainNode.gain.value = 1 / Math.pow(distort, 2);
+				if (acceleration > 25) {
 					_this.smash();
 				}
 			}

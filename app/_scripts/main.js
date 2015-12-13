@@ -1,3 +1,4 @@
+/*global performance*/
 'use strict';
 
 const context = window.AudioContext ? new window.AudioContext() : new window.webkitAudioContext();
@@ -80,8 +81,6 @@ loadedAudio
 	function StarSword(color = '#2FF923') {
 
 		let hum, on, off, activated = false;
-		let doppler = 0;
-
 
 		Object.defineProperty(this, 'activated', {
 			get() { return activated; }
@@ -90,10 +89,6 @@ loadedAudio
 		Object.defineProperty(this, 'color', {
 			get() { return color; }
 		});
-
-		let maxD = 0;
-		let minD = 0;
-		let prevD = 0;
 
 		this.on = function () {
 
@@ -141,14 +136,31 @@ loadedAudio
 			createSource(smashBuffer).source.start();
 		};
 
+		let vx=0, vy=0, vz=0, t=0;
 		window.addEventListener('devicemotion', event => {
-			prevD = doppler;
-			doppler = Math.sqrt(Math.pow(event.acceleration.x, 2) + Math.pow(event.acceleration.y, 2) + Math.pow(event.acceleration.z, 2));
-			if (doppler > maxD) maxD = doppler;
-			if (doppler < minD) minD = doppler;
+
+			const nt = (performance ? performance.now() : Date.now());
+			if (t) {
+				const dt = (nt - t)/1000;
+				vx *= 0.8; // Hack to allow velocity to settle
+				vy *= 0.8;
+				vz *= 0.8;
+				vx += event.acceleration.x * dt;
+				vy += event.acceleration.y * dt;
+				vz += event.acceleration.z * dt;
+			}
+			t = nt;
+
+			// For detecting sudden stops
+			const acceleration = Math.sqrt(Math.pow(event.acceleration.x, 2) + Math.pow(event.acceleration.y, 2) + Math.pow(event.acceleration.z, 2));
+			let distort = Math.sqrt(vx*vx + vy*vy + vz*vz);
+			distort =  Math.pow(1.2, distort);
+			console.log(distort);
+
 			if (hum) {
-				hum.source.playbackRate.value = Math.max(Math.min(Math.pow(1.3, doppler - prevD), 2), 0.8);
-				if (doppler > 40) {
+				hum.source.playbackRate.value = distort;
+				hum.gainNode.gain.value = 1/Math.pow(distort, 2);
+				if (acceleration > 25) {
 					this.smash();
 				}
 			}
