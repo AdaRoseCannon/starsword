@@ -43,6 +43,21 @@ if (window.location.protocol !== "https:" && window.location.hostname !== 'local
 	});
 })();
 
+// ios won't play any sound until this is done
+function unlockIOSSound() {
+
+	// create empty buffer
+	var buffer = context.createBuffer(1, 1, 22050);
+	var source = context.createBufferSource();
+	source.buffer = buffer;
+
+	// connect to output (your speakers)
+	source.connect(context.destination);
+
+	// play the file
+	source.noteOn(0);
+}
+
 function createSource(buffer) {
 	var source = context.createBufferSource();
 
@@ -162,7 +177,11 @@ loadedAudio.then(function (_ref) {
 }).then(function (StarSword) {
 
 	var starsword = new StarSword();
+
 	document.querySelector('.onButton').addEventListener('click', function () {
+
+		unlockIOSSound();
+
 		if (starsword.activated) {
 			starsword.off();
 		} else {
