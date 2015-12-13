@@ -24,6 +24,7 @@ body {
 	margin-bottom: 1em;
 	position: relative;
 	box-shadow: 0 0 1em black inset;
+	overflow: hidden;
 }
 
 
@@ -34,6 +35,7 @@ body {
 	position: absolute;
 	top: 0;
 	bottom: 0;
+	box-shadow: 0 0 1em black;
 }
 
 .grip div:before {
@@ -78,6 +80,19 @@ body {
 	bottom: 0;
 }
 
+.handle .glow {
+	opacity: 0;
+	box-shadow: 0 0 3em 0.5em #2FF923;
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	transition: opacity 0.1s ease;
+}
+
+.handle.on .glow {
+	opacity: 1;
+}
 
 @media screen and (orientation:landscape) {
 	.handle {
