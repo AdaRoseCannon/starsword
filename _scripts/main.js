@@ -155,7 +155,6 @@ loadedAudio
 			const acceleration = Math.sqrt(Math.pow(event.acceleration.x, 2) + Math.pow(event.acceleration.y, 2) + Math.pow(event.acceleration.z, 2));
 			let distort = Math.sqrt(vx*vx + vy*vy + vz*vz);
 			distort =  Math.pow(1.2, distort);
-			console.log(distort);
 
 			if (hum) {
 				hum.source.playbackRate.value = distort;
@@ -176,6 +175,8 @@ loadedAudio
 		
 	const starsword = new StarSword();
 
+	const handle = document.querySelector('.handle');
+
 	document.querySelector('.onButton')
 	.addEventListener('click', function () {
 
@@ -183,8 +184,10 @@ loadedAudio
 
 		if (starsword.activated) {
 			starsword.off();
+			handle.classList.remove('on');
 		} else {
 			starsword.on();
+			handle.classList.add('on');
 		}
 	});
 })
