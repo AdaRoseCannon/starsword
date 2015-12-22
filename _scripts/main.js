@@ -160,7 +160,7 @@ loadedAudio
 
 			if (hum) {
 				hum.source.playbackRate.value = distort;
-				hum.gainNode.gain.value = 1/Math.pow(distort, 2);
+				// hum.gainNode.gain.value = 1/Math.pow(distort, 2);
 				if (acceleration > 25) {
 					this.smash();
 				}
