@@ -13,6 +13,16 @@ self.addEventListener('install', function(event) {
 	}
 });
 
+toolbox.precache([
+	'/index.html',
+	'/audio/hum.wav',
+	'/audio/off.wav',
+	'/audio/on.wav',
+	'/audio/smash.wav',
+	'/scripts/main.js',
+	'/styles/main.css'
+]);
+
 const defaultRoute = (location.protocol === 'http:' || location.hostname === 'localhost') ? toolbox.networkFirst : toolbox.fastest;
 toolbox.router.default = function(request, values, options) {
 
